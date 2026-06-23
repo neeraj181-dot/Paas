@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini PaaS Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header__content">
+        <div class="header__brand">
+          <div class="header__logo" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect x="2" y="6" width="24" height="16" rx="3" stroke="currentColor" stroke-width="2"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="10" cy="14" r="1.5" fill="currentColor"/>
+              <circle cx="14" cy="14" r="1.5" fill="currentColor"/>
+              <circle cx="18" cy="14" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="header__title">Mini PaaS Dashboard</h1>
+            <p class="header__subtitle">Deploy and manage Docker applications</p>
+          </div>
+        </div>
+        <div class="header__status">
+          <span class="status-dot" id="connectionDot"></span>
+          <span class="status-text" id="connectionText">Connecting…</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+      <section class="card deploy-card">
+        <div class="card__header">
+          <h2 class="card__title">Deploy Application</h2>
+          <p class="card__description">Launch a new nginx container on your chosen port</p>
+        </div>
+        <form id="deployForm" class="deploy-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appName">App Name</label>
+              <input
+                type="text"
+                id="appName"
+                name="appName"
+                placeholder="my-app"
+                autocomplete="off"
+                required
+                pattern="[a-zA-Z0-9][a-zA-Z0-9_.-]*"
+              >
+              <span class="form-hint">Letters, numbers, hyphens, underscores</span>
+            </div>
+            <div class="form-group">
+              <label for="port">Port</label>
+              <input
+                type="number"
+                id="port"
+                name="port"
+                placeholder="8081"
+                min="1"
+                max="65535"
+                required
+              >
+              <span class="form-hint">Host port (1–65535)</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary" id="deployBtn">
+              <span class="btn__text">Deploy</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+          </div>
+          <div id="deployMessage" class="form-message" hidden></div>
+        </form>
+      </section>
+
+      <section class="apps-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Running Applications</h2>
+            <p class="section-subtitle">Auto-refreshes every 5 seconds</p>
+          </div>
+          <button type="button" class="btn btn--ghost" id="refreshBtn" title="Refresh now">
+            <svg class="btn__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M13.5 3v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+
+        <div id="appsLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading applications…</p>
+        </div>
+
+        <div id="appsError" class="error-state" hidden>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p id="appsErrorText">Failed to load applications</p>
+          <button type="button" class="btn btn--ghost" id="retryBtn">Try again</button>
+        </div>
+
+        <div id="appsEmpty" class="empty-state" hidden>
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="8" y="14" width="32" height="22" rx="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M16 14V10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="18" cy="25" r="2" fill="currentColor" opacity="0.5"/>
+            <circle cx="24" cy="25" r="2" fill="currentColor" opacity="0.5"/>
+            <circle cx="30" cy="25" r="2" fill="currentColor" opacity="0.5"/>
+          </svg>
+          <p>No applications running</p>
+          <span>Deploy your first app above to get started</span>
+        </div>
+
+        <div id="appsGrid" class="apps-grid" hidden></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Mini PaaS &mdash; Docker-powered application platform</p>
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
